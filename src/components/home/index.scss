@@ -1,0 +1,133 @@
+.container {
+  @media (min-width: 768px) {
+    width: 145%;
+  }
+}
+.cont-logo {
+  margin-top: 35px;
+  margin-bottom: 140px;
+  & .title,
+  .subtitle,
+  .subtitle__description {
+    color: #00af41;
+    margin: 0;
+    font-size: 30px;
+  }
+  & .title {
+    font-size: 60px;
+    margin: 0;
+  }
+  & .subtitle__description {
+    font-size: 20px;
+  }
+  @media (min-width: 768px) {
+  }
+}
+
+.cont__body {
+  margin: 0px 0px 0px 100px;
+  & .description__home {
+    position: relative;
+    left: 0;
+    width: 70%;
+    color: black;
+  }
+  & .img__rounded {
+    width: 210%;
+    position: relative;
+    right: 200px;
+    border: 2px solid #00af41;
+    border-radius: 10px;
+  }
+  & .title_v {
+    color: #00af41;
+  }
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+    margin: 0px 0px 0px 0px;
+    & h2 {
+      position: relative;
+      left: 90px;
+    }
+    & .description__home {
+      width: 155%;
+    }
+    & .img__rounded {
+      width: 220%;
+      position: relative;
+      left: 2px;
+    }
+  }
+}
+
+.cont__articles {
+  margin-right: -80px;
+  .title__articles {
+    margin: 30px 0px 10px 480px;
+  }
+  .cont__gallery {
+    padding: 0 60px;
+
+    margin: 60px 100px 100px 0;
+    .img__gallery {
+      width: 100%;
+      height: 280px;
+      border-bottom: 1px solid #00af41;
+    }
+    .card__gallery {
+      width: 100%;
+    }
+    .card-text {
+      font-size: 16px;
+      display: -webkit-box;
+      margin-bottom: 0;
+      max-height: 65px;
+      line-height: 20px;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    margin-right: 0;
+    .title__articles {
+      margin: 0 90px;
+    }
+    .cont__gallery {
+      width: 100%;
+      margin: 0 0 0 0;
+      padding: 10px 10px 10px 10px;
+      .card__gallery {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.img-item {
+  height: 370px;
+}
+
+.card-title {
+  color: black;
+  text-decoration: none;
+}
+
+.card-text {
+  color: black;
+  text-decoration: none;
+}
+
+#sticky-footer {
+  background-color: #009c41;
+  color: #00af41;
+  flex-shrink: none;
+  & li {
+    color: black;
+  }
+  & .img__footer {
+    width: 40%;
+    margin-left: 300px;
+  }
+}
