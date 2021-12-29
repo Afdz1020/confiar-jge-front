@@ -18,19 +18,31 @@ const Articles = () => {
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(null);
   const [initialPage, setInitialPage] = useState(0);
+  const [filters, setFilters] = useState({ estado: 'Activo' });
   let categorias = useSelector((state) => state.global.categorias);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getArticles = async () => {
     try {
       setLoading(true);
+
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let body = JSON.stringify({
+        init: 0,
+        end: 6,
+        filters,
+      });
       let requestOptions: RequestInit = {
-        method: 'GET',
+        method: 'POST',
+        headers: myHeaders,
         redirect: 'follow',
+        body,
       };
 
       let response = await fetch(
-        `${Constants.URL_SERVICES}/api/articulos?init=${0}&end=${6}`,
+        `${Constants.URL_SERVICES}/api/filterArticles`,
         requestOptions
       );
 
@@ -88,7 +100,7 @@ const Articles = () => {
 
       let response = await fetch(
         `${
-        Constants.URL_SERVICES
+          Constants.URL_SERVICES
         }/api/filterArticles?init=${initPage}&end=${6}&property=${filter}&value=${categorySelected}`,
         requestOptions
       );
@@ -110,19 +122,31 @@ const Articles = () => {
       setCategoryName(categoria.titulo);
       setLoading(true);
       setInitialPage(0);
+
+      let myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+
+      let newFilter = { ...filters };
+      newFilter['categoria'] = categoria._id;
+
+      let body = JSON.stringify({
+        init: 0,
+        end: 6,
+        filters: newFilter,
+      });
+
       let requestOptions: RequestInit = {
-        method: 'GET',
+        method: 'POST',
+        headers: myHeaders,
         redirect: 'follow',
+        body,
       };
       let response = await fetch(
-        `${
-        Constants.URL_SERVICES
-        }/api/filterArticles?init=${0}&end=${6}&property=categoria&value=${
-        categoria._id
-        }`,
+        `${Constants.URL_SERVICES}/api/filterArticles`,
         requestOptions
       );
       setFilter('categoria');
+      setFilters(newFilter);
       let articulosJson = await response.json();
 
       let pageCounts = Math.ceil(articulosJson.count / 6);
@@ -329,7 +353,17 @@ const Articles = () => {
                               src={articulo.imgFrontal}
                               alt={`img-${articulo._id}`}
                             />
-                            <div className="sale pp-sale">Disponible</div>
+                            <div
+                              className={
+                                articulo.estado === 'Activo'
+                                  ? 'sale pp-sale'
+                                  : 'sale not-pp-sale'
+                              }
+                            >
+                              {articulo.estado === 'Activo'
+                                ? 'Disponible'
+                                : 'No disponible'}
+                            </div>
                             <div className="icon">
                               <i className="icon_heart_alt"></i>
                             </div>
@@ -362,8 +396,8 @@ const Articles = () => {
                     ))}
                   </div>
                 ) : (
-                      <h1>No se encontraron resultados</h1>
-                    )}
+                  <h1>No se encontraron resultados</h1>
+                )}
               </div>
               <div className="loading-more">
                 {articulos && articulos.length ? (

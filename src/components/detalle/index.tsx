@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { formatPrice } from '../../utils/utils';
+import { Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import { FacebookShareButton, FacebookIcon, WhatsappIcon } from 'react-share';
+import { useHistory } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import * as Constants from '../../utils/constants';
@@ -10,6 +13,9 @@ const Detalle = () => {
   const [detalle, setDetalle] = useState(null);
   const [photos, setFotos] = useState([]);
   let { id } = useParams();
+  let isLogin = useSelector((state) => state.global.isLogin);
+  const history = useHistory();
+  console.log('isLogin =>', isLogin);
 
   useEffect(() => {
     async function art() {
@@ -69,6 +75,34 @@ const Detalle = () => {
     }
   };
 
+  const marcarVendido = async () => {
+    let data = JSON.parse(localStorage.getItem('usuario'));
+    try {
+      let requestOptions: RequestInit = {
+        method: 'DELETE',
+        redirect: 'follow',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${data.token}`,
+        },
+      };
+
+      let response = await fetch(
+        `${Constants.URL_SERVICES}/api/deleteArticulos/${detalle._id}`,
+        requestOptions
+      );
+
+      let articulosJson = await response.json();
+
+      if (articulosJson && articulosJson.ok) {
+        history.push('/Articulos');
+      }
+    } catch (error) {
+      return null;
+    }
+  };
+
   return (
     <div className="container">
       <br />
@@ -87,7 +121,12 @@ const Detalle = () => {
               <div className="col-lg-12">
                 <div className="product-details">
                   <div className="pd-title">
-                    <span>{detalle.categoria.titulo}</span>
+                    <span>{detalle.categoria.titulo}</span>{' '}
+                    {isLogin && (
+                      <Button variant="success" onClick={() => marcarVendido()}>
+                        Marcar como vendido
+                      </Button>
+                    )}
                     <h3>{detalle.titulo}</h3>
                   </div>
 
@@ -97,39 +136,25 @@ const Detalle = () => {
                   </div>
 
                   <div className="pd-size-choose">
-                    <h5>Compartir</h5>
+                    <h5>Estoy interesado</h5>
                     <div
                       className="sc-item"
                       onClick={() => {
-                        let message = encodeURIComponent(
+                        /* let message = encodeURIComponent(
                           `¿ Hola sigue disponible ? ${window.location.href}/#/detalle/${detalle._id}`
+                        ); */
+                        let message = encodeURIComponent(
+                          `¿ Hola sigue disponible ? <a href="${window.location.href}/#/detalle/${detalle._id}"> Ver articulo</a> `
                         );
                         window.open(
-                          `https://api.whatsapp.com/send?phone=573146285439&text=${message}&source=&data=&app_absent=`,
+                          `https://api.whatsapp.com/send?phone=573007521318&text=${message}&source=&data=&app_absent=`,
                           '_blank'
                         );
                       }}
                     >
                       <input type="radio" id="sm-size" />
                       <label htmlFor="sm-size">
-                        {/* <WhatsappShareButton
-                          url={window.location.href}
-                          className="Demo__some-network__share-button"
-                        >
-                          <WhatsappIcon size={32} round />
-                        </WhatsappShareButton> */}
                         <WhatsappIcon size={32} round />
-                      </label>
-                    </div>
-                    <div className="sc-item">
-                      <input type="radio" id="md-size" />
-                      <label htmlFor="md-size">
-                        <FacebookShareButton
-                          url={window.location.href}
-                          quote={detalle.titulo + ` \n ${detalle.descripcion}`}
-                        >
-                          <FacebookIcon size={32} round />
-                        </FacebookShareButton>
                       </label>
                     </div>
                   </div>
@@ -137,6 +162,8 @@ const Detalle = () => {
               </div>
             </div>
           </div>
+
+          <div className="col-lg-6"></div>
         </div>
       ) : null}
     </div>
